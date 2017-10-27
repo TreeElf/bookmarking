@@ -280,7 +280,15 @@ function downloadOldBookmark(){
  *  Upload HTML file to google drive folder
 */
 
-function uploadFile(htmltext) {
+function uploadFile(htmltext, url) {
+    //console.log(typeof htmltext);
+    //console.log(htmltext.indexOf("<head"));
+    var position = htmltext.indexOf(">",htmltext.indexOf("<head")) +1;
+    //console.log(htmltext.substring(htmltext.indexOf("<head")));
+    var base = "\n<base href\"" + url + "\" target=\"_blank\">";
+    console.log(base);
+    htmltext = [htmltext.slice(0, position), base, htmltext.slice(position)].join('');
+    console.log(htmltext)
     var xhr = new XMLHttpRequest;
     xhr.open("POST", "https://www.googleapis.com/upload/drive/v2/files?uploadType=multipart");
     xhr.setRequestHeader('Content-Type',
@@ -318,7 +326,7 @@ function OnLoad(theURL){
     }
     xmlhttp.onreadystatechange=function(){
         if (xmlhttp.readyState==4 && xmlhttp.status==200){
-            uploadFile(xmlhttp.responseText);
+            uploadFile(xmlhttp.responseText, theURL);
         }
     }
     xmlhttp.open("GET", theURL);
